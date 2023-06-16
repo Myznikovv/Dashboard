@@ -44,7 +44,7 @@ export default function GeneralApp() {
     // const { user } = useAuth();
     //    const theme = useTheme();
     const { themeStretch } = useSettings();
-    const [settings, setSettings] = useLocalStorage(`customOptions_${localStorage.getItem('token')}`, {});
+    const [settings, setSettings] = useLocalStorage(`customOptions_${localStorage.getItem('accessToken')}`, {});
     const [warehouseName, setWarehouseName] = useState([{ label: 'Все', key: '%' }]);
     const [dashboardData, setDashboardData] = useState([]);
     const [chosedWarehouse, setChosedWarehouse] = useState("%");
@@ -56,21 +56,6 @@ export default function GeneralApp() {
         data: [{ filter: "По месяцам", data: [] }],
         isLoading: true
     })
-
-    // const Authorise = async () => {
-
-    //     await axios.post('https://ideav.online/api/magnet/auth', { "login": "guest", "pwd": "magnetx" },
-    //         {
-    //             headers: {
-    //                 'Content-Type': 'application/x-www-form-urlencoded'
-    //             },
-    //         })
-    //         .then((res) => {
-    //             // document.cookie = `magnet= ${res.data.token}`;
-    //             console.log(res.data.token)
-    //             window.localStorage.setItem("accessToken", res.data.token);
-    //         })
-    // }
 
     const getInfo = async (url) => {
 
@@ -88,26 +73,56 @@ export default function GeneralApp() {
         }
     };
 
+    const postInfo = async (url, params) => {
+
+        try {
+            const response = await axios.post(`${_baseUrl}${url}`, params, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Authorization': localStorage.getItem('accessToken'),
+                },
+            });
+
+            return response;
+        } catch (error) {
+            // Обработка ошибок
+        }
+    };
+
 
     const getDataTable = async (value) => {
         startDownloadState();
-        await getInfo(`/report/42928?FR_warehouseID=${value}&JSON_KV`)
+        await postInfo(`/report/42928?FR_warehouseID=${value}&JSON_KV`,
+            {
+                loadedDayCount: settings?.loadedDayCount || 30,
+                warehouseName: value,
+                //            lackOfGoodsMonth: isPresent(settings?.lackOfGoodsMonth) ? settings.lackOfGoodsMonth : false,
+                //            lackOfGoodsQuarter: isPresent(settings?.lackOfGoodsQuarter) ? settings.lackOfGoodsQuarter : false,
+                //            lackOfGoodsWeek: isPresent(settings?.lackOfGoodsWeek) ? settings.lackOfGoodsWeek : false,
+                lackOfGoodsTotal: isPresent(settings?.lackOfGoodsTotal) ? settings.lackOfGoodsTotal : false,
+                useRepurchasePercent: isPresent(settings?.useRepurchasePercent) ? settings.useRepurchasePercent : false,
+                useMaxDemandRate: isPresent(settings?.useMaxDemandRate) ? settings.useMaxDemandRate : false,
+                dopostavkaDate: settings?.dopostavkaDate || new Date().toISOString(),
+                selectedArticles: settings.selectedArticles,
+                selectedBrands: settings.selectedBrands,
+                selectedCategories: settings.selectedCategories,
+                selectedSubjects: settings.selectedSubjects,
+                selectedTechSizes: settings.selectedTechSizes,
+            })
             .then(response => {
-                    setTableDataState({
-                        data: response.data,
-                        isLoading: false
-                    })
-                    setCustomOptionsState({
-                        ...customOptionsState,
-                        uniqueBrands: getUniqueBrands(response.data),
-                        uniqueCategories: getUniqueCategories(response.data),
-                        uniqueSubjects: getuniqueSubjects(response.data),
-                        uniqueArticles: getUniqueArticles(response.data),
-                        uniqueTechSizes: getUniqueTechSizes(response.data),
-                        isLoading: false
-                    })
-
-                return response.data
+                setTableDataState({
+                    data: response.data,
+                    isLoading: false
+                })
+                setCustomOptionsState({
+                    ...customOptionsState,
+                    uniqueBrands: getUniqueBrands(response.data),
+                    uniqueCategories: getUniqueCategories(response.data),
+                    uniqueSubjects: getuniqueSubjects(response.data),
+                    uniqueArticles: getUniqueArticles(response.data),
+                    uniqueTechSizes: getUniqueTechSizes(response.data),
+                    isLoading: false
+                })
             })
     }
     const getDataDashboard = async (value) => {
@@ -134,7 +149,7 @@ export default function GeneralApp() {
             })
     }
 
-    const getToken = ( () => {
+    const getToken = (() => {
         getWarehouse();
         getDataDashboard(chosedWarehouse);
         getDataTable(chosedWarehouse);
@@ -184,7 +199,10 @@ export default function GeneralApp() {
         })
     };
 
-
+    useEffect(() => {
+        getDataTable(chosedWarehouse)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [settings])
     const [customOptionsState, setCustomOptionsState] = useState({
         uniqueBrands: null,
         uniqueCategories: null,
@@ -329,7 +347,9 @@ export default function GeneralApp() {
                     <Grid item xs={12} md={12} lg={12}>
                         <CustomOptions customOptionsState={customOptionsState}
                             settings={settings}
-                            onChange={saveToLocalStorage}
+                            onChange={(values) => {
+                                saveToLocalStorage(values);
+                            }}
                         />
                     </Grid>
 
@@ -351,7 +371,7 @@ export default function GeneralApp() {
                     </Grid> */}
 
                     <Grid item xs={12} md={12} lg={12}>
-                        <TableDopostavki tableDataState={searchInResultData(tableDataState)} /> 
+                        <TableDopostavki tableDataState={searchInResultData(tableDataState)} />
                     </Grid>
 
                 </Grid>
@@ -363,22 +383,18 @@ export default function GeneralApp() {
 
 // const getData = (value) => {
 //         startDownloadState();
-//         axios.get('https://ideav.online/api/magnet/report/42928', {
-//             loadedDayCount: settings?.loadedDayCount || 30,
-//             warehouseName: value,
-//             //            lackOfGoodsMonth: isPresent(settings?.lackOfGoodsMonth) ? settings.lackOfGoodsMonth : false,
-//             //            lackOfGoodsQuarter: isPresent(settings?.lackOfGoodsQuarter) ? settings.lackOfGoodsQuarter : false,
-//             //            lackOfGoodsWeek: isPresent(settings?.lackOfGoodsWeek) ? settings.lackOfGoodsWeek : false,
-//             lackOfGoodsTotal: isPresent(settings?.lackOfGoodsTotal) ? settings.lackOfGoodsTotal : false,
-//             useRepurchasePercent: isPresent(settings?.useRepurchasePercent) ? settings.useRepurchasePercent : false,
-//             useMaxDemandRate: isPresent(settings?.useMaxDemandRate) ? settings.useMaxDemandRate : false,
-//             dopostavkaDate: settings?.dopostavkaDate || new Date().toISOString(),
-//         }, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-Authorization': localStorage.getItem("token"),
-//             }
-//         })
+//          axios.post('/api/data/get_table_data', {
+        //     loadedDayCount: settings?.loadedDayCount || 30,
+        //     warehouseName: value,
+        // //            lackOfGoodsMonth: isPresent(settings?.lackOfGoodsMonth) ? settings.lackOfGoodsMonth : false,
+        // //            lackOfGoodsQuarter: isPresent(settings?.lackOfGoodsQuarter) ? settings.lackOfGoodsQuarter : false,
+        // //            lackOfGoodsWeek: isPresent(settings?.lackOfGoodsWeek) ? settings.lackOfGoodsWeek : false,
+        //     lackOfGoodsTotal: isPresent(settings?.lackOfGoodsTotal) ? settings.lackOfGoodsTotal : false,
+        //     useRepurchasePercent: isPresent(settings?.useRepurchasePercent) ? settings.useRepurchasePercent : false,
+        //     useMaxDemandRate: isPresent(settings?.useMaxDemandRate) ? settings.useMaxDemandRate : false,
+        //     dopostavkaDate: settings?.dopostavkaDate || new Date().toISOString(),
+        // })
+
 //             .then(response => {
 //                 setTableDataState({
 //                     data: response.data.data,
