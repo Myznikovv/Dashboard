@@ -232,7 +232,7 @@ export const columns = [
     },
     { // 19
         name: "Максимальная скорость спроса, шт",
-        label: "Максимальная скорость спроса, шт",
+        label: "Скорость спроса, шт",
         options: {
             filter: false,
             setCellProps: () => (getWidthStyle(200)),

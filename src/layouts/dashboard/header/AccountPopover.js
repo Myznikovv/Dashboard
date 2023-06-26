@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import useAuth from 'src/hooks/useAuth';
 // @mui
@@ -18,9 +18,14 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
 
-    const { logout } = useAuth();
+  const { logout, initialize } = useAuth();
+  const { user } = useAuth();
 
 
+  useEffect(() => {
+    initialize()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -67,10 +72,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Rayan Moran
+            {`${user?.\u0418\u043c\u044f} ${user?.\u0424\u0430\u043c\u0438\u043b\u0438\u044f}`}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            rayan.moran@gmail.com
+            {user?.\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c}
           </Typography>
         </Box>
 

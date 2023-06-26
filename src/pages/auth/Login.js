@@ -109,12 +109,12 @@ export default function Login() {
                         <LoginForm/>
 
 
-                        {/* <Typography variant="body2" align="center" sx={{mt: 3}}>
+                        <Typography variant="body2" align="center" sx={{mt: 3}}>
                             Нет аккаунта?{' '}
                             <Link variant="subtitle2" component={RouterLink} to={PATH_AUTH.register}>
                                 Зарегистрировать новый аккаунт
                             </Link>
-                        </Typography> */}
+                        </Typography>
 
                     </ContentStyle>
                 </Container>

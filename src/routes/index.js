@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, useRoutes, useLocation } from 'react-router-dom';
+import { AuthProvider } from 'src/contexts/JWTContext';
 // layouts
 import DashboardLayout from '../layouts/dashboard';
 import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
@@ -11,6 +12,7 @@ import GuestGuard from '../guards/GuestGuard';
 import { PATH_AFTER_LOGIN } from '../config';
 // components
 import LoadingScreen from '../components/LoadingScreen';
+
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +31,8 @@ const Loadable = (Component) => (props) => {
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const NotFound = Loadable(lazy(() => import('../pages/Page404')));
 const Login = Loadable(lazy(() => import('../pages/auth/Login')));
+const Register = Loadable(lazy(() => import('../pages/auth/Register')));
+
 
 // export default function Router() {
 //   return useRoutes([
@@ -67,11 +71,18 @@ export default function Router() {
             </GuestGuard>
           ),
         },
+        {
+          path: 'register',
+          element: (
+            <GuestGuard>
+              <Register />
+            </GuestGuard>
+          ),
+        },    
         { path: 'login-unprotected', element: <Login /> },
+        
       ],
     },
-
-
 
     // Dashboard Routes
     {
@@ -83,7 +94,7 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to={"dashboard/app"} replace />, index: true },
-        { path: 'dashboard/app', element: <GeneralApp /> },
+        { path: 'dashboard/app', element:<GeneralApp />  },
       ],
     },
 

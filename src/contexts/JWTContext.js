@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 // utils
 import axios from '../utils/axios';
-import { isValidToken, setSession } from '../utils/jwt';
+import { setSession } from '../utils/jwt';
 // import { createInstance } from 'i18next';
 
 // ----------------------------------------------------------------------
@@ -25,8 +25,7 @@ const handlers = {
   },
   LOGIN: (state, action) => {
     const { user } = action.payload;
-    // console.log(user);
-    // const user = {name: "TEST USER"};
+  
 
     return {
       ...state,
@@ -45,6 +44,7 @@ const handlers = {
     return {
       ...state,
       isAuthenticated: true,
+      isInitialized: true,
       user,
     };
   },
@@ -58,6 +58,8 @@ const AuthContext = createContext({
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
+  initialize: () => Promise.resolve(),
+
 });
 
 // ----------------------------------------------------------------------
@@ -69,43 +71,33 @@ AuthProvider.propTypes = {
 function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        const accessToken = window.localStorage.getItem('accessToken');
+  const initialize = async () => {
+    try {
+      const accessToken = window.localStorage.getItem('accessToken');
 
-        if (accessToken !== null) {
-          console.log(accessToken)
-          setSession(accessToken);
+      if (accessToken !== null) {
+        setSession(accessToken);
 
-          const user = (await axios.get('https://ideav.online/api/magnet/report/64031?JSON_KV'),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Authorization': localStorage.getItem('accessToken'),
-            }
-          }).data;
+        const response = await axios.get('https://ideav.online/api/magnet/report/66177?JSON_KV',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Authorization': localStorage.getItem('accessToken'),
+          }
+        });
 
-          //          const user = {...user, accessToken};
-          dispatch({
-            type: 'INITIALIZE',
-            payload: {
-              isAuthenticated: true,
-              user,
-            },
-          });
+        const user = response.data[0];
 
-        } else {
-          dispatch({
-            type: 'INITIALIZE',
-            payload: {
-              isAuthenticated: false,
-              user: null,
-            },
-          });
-        }
-      } catch (err) {
-        console.error(err);
+
+        dispatch({
+          type: 'INITIALIZE',
+          payload: {
+            isAuthenticated: true,
+            user
+          },
+        });
+
+      } else {
         dispatch({
           type: 'INITIALIZE',
           payload: {
@@ -114,8 +106,20 @@ function AuthProvider({ children }) {
           },
         });
       }
-    };
+    } catch (err) {
+      console.error(err);
+      dispatch({
+        type: 'INITIALIZE',
+        payload: {
+          isAuthenticated: false,
+          user: null,
+        },
+      });
+    }
+  };
 
+  useEffect(() => {
+    
     initialize();
   }, []);
 
@@ -131,6 +135,7 @@ function AuthProvider({ children }) {
         },
       })
 
+    const xsrfToken = response.data._xsrf;
     const accessToken = response.data.token;
     const user = response.data.id;
 
@@ -139,6 +144,7 @@ function AuthProvider({ children }) {
       throw new Error(response.data[0].error);
     } else {
       setSession(accessToken);
+      // localStorage.setItem("xsrf",xsrfToken);
       dispatch({
         type: 'LOGIN',
         payload: {
@@ -150,20 +156,32 @@ function AuthProvider({ children }) {
 
   };
 
-  const register = async (firstName, phone, apiKeyWB, email, login, password) => {
-    const response = await axios.post('/api/users/register', {
-      firstName,
-      phone,
-      apiKeyWB,
-      email,
-      login,
-      password,
-    });
-    //    const { accessToken, user } = response.data;
-    const accessToken = response.data.token;
-    const user = response.data.user;
+  const register = async (t33, t66078, t66076, t18, t20, t40, t125) => {
+    const accessToken = 'reFTGAW83EW2RDu2S0';
+    const _xsrf = 'reFTGAW83EW2RDu2S0';
+    const up = 1;
+    const t115=164;
+    const response = await axios.post('https://ideav.online/api/magnet/_m_new/18', {
+      t33,
+      t66078,
+      t66076,
+      t18,
+      t20,
+      t40,
+      t125,
+      t115,
+      up,
+      _xsrf
+    },{headers:{'X-Authorization':accessToken}});
 
-    setSession(accessToken);
+
+    if(response.data.warning){
+      throw  new Error("Имя пользователя уже занято");
+    }
+    //    const { accessToken, user } = response.data;
+    const user = t18;
+    console.log(user)
+    setSession(t40);
     //    window.localStorage.setItem('accessToken', accessToken);
     dispatch({
       type: 'REGISTER',
@@ -186,6 +204,7 @@ function AuthProvider({ children }) {
         login,
         logout,
         register,
+        initialize,
       }}
     >
       {children}

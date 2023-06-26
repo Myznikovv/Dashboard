@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Link, Typography, Avatar } from '@mui/material';
+import useAuth from 'src/hooks/useAuth';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +24,14 @@ NavbarAccount.propTypes = {
   isCollapse: PropTypes.bool,
 };
 
+
+
 export default function NavbarAccount({ isCollapse }) {
+  const { user } = useAuth();
+
+
+
+
   return (
     <Link underline="none" color="inherit">
       <RootStyle
@@ -48,10 +57,10 @@ export default function NavbarAccount({ isCollapse }) {
           }}
         >
           <Typography variant="subtitle2" noWrap>
-            Rayan Moran
+            {`${user?.\u0418\u043c\u044f} ${user?.\u0424\u0430\u043c\u0438\u043b\u0438\u044f}`}
           </Typography>
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            user
+            {user?.\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c}
           </Typography>
         </Box>
       </RootStyle>

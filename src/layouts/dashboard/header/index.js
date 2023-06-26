@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import useAuth from 'src/hooks/useAuth';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Stack, AppBar, Toolbar } from '@mui/material';
@@ -61,6 +62,8 @@ export default function DashboardHeader({ onOpenSidebar, isCollapse = false, ver
   const isOffset = useOffSetTop(HEADER.DASHBOARD_DESKTOP_HEIGHT) && !verticalLayout;
 
   const isDesktop = useResponsive('up', 'lg');
+
+  const { user} = useAuth();
 
   return (
     <RootStyle isCollapse={isCollapse} isOffset={isOffset} verticalLayout={verticalLayout}>
