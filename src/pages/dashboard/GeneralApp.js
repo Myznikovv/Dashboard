@@ -2,7 +2,7 @@
 import axios from 'axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import { Button, Card, CircularProgress, Container, Grid, Stack, Typography } from '@mui/material';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { StocksFromClientToClient, TableDopostavki } from '../../sections/@dashboard/general/dopostavki';
 // hooks
 
@@ -24,12 +24,9 @@ import {
     isPresent
 } from "../../sections/@dashboard/general/dopostavki/Util";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { warehouses } from "../../sections/@dashboard/general/dopostavki/warehouses";
 import Iconify from "../../components/Iconify";
 import { AppWidgetSummary } from "../../sections/@dashboard/general/app";
-import Video from "../../components/Video";
 import AppWelcomeVideo from "../../sections/@dashboard/general/app/AppWelcomeVideo";
-import Authorise from './GeneralAppService';
 
 
 
@@ -125,7 +122,7 @@ export default function GeneralApp() {
                 })
             })
     }
-    const getDataDashboard = async (value) => {
+    const getDataDashboard = useCallback(async (value) => {
         await getInfo(`/report/62934?FR_warehouseID=${value}&JSON_KV`)
             .then(response => {
                 const result = Number(getTotalInfoFromDashboardData(response.data, "Излишек", chosedWarehouse));
@@ -134,7 +131,7 @@ export default function GeneralApp() {
 
                 return response.data;
             })
-    }
+    }, [chosedWarehouse]) 
 
     const getWarehouse = async () => {
         await getInfo('/report/62941')
@@ -152,8 +149,6 @@ export default function GeneralApp() {
     const getToken = (() => {
         getWarehouse();
         getDataDashboard(chosedWarehouse);
-        getDataTable(chosedWarehouse);
-        saveToLocalStorage();
     })
 
 
@@ -199,10 +194,7 @@ export default function GeneralApp() {
         })
     };
 
-    useEffect(() => {
-        getDataTable(chosedWarehouse)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [settings])
+   
     const [customOptionsState, setCustomOptionsState] = useState({
         uniqueBrands: null,
         uniqueCategories: null,
@@ -211,6 +203,10 @@ export default function GeneralApp() {
         uniqueTechSizes: null,
         isLoading: true,
     })
+    useEffect(() => {
+        getDataTable(chosedWarehouse)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [settings])
 
     function handleChoseWareHouse(value) {
         setChosedWarehouse(value);
