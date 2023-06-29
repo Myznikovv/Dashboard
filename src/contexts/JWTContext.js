@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from 'react';
+import { createContext, useCallback, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 // utils
 import axios from '../utils/axios';
@@ -25,7 +25,7 @@ const handlers = {
   },
   LOGIN: (state, action) => {
     const { user } = action.payload;
-  
+
 
     return {
       ...state,
@@ -71,6 +71,8 @@ AuthProvider.propTypes = {
 function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+
+
   const initialize = async () => {
     try {
       const accessToken = window.localStorage.getItem('accessToken');
@@ -89,15 +91,16 @@ function AuthProvider({ children }) {
         const user = response.data[0];
 
 
-        dispatch({
-          type: 'INITIALIZE',
-          payload: {
-            isAuthenticated: true,
-            user
-          },
-        });
+          dispatch({
+            type: 'INITIALIZE',
+            payload: {
+              isAuthenticated: true,
+              user
+            },
+          });
 
       } else {
+        console.log("Error")
         dispatch({
           type: 'INITIALIZE',
           payload: {
@@ -116,11 +119,11 @@ function AuthProvider({ children }) {
         },
       });
     }
-  };
-
+  }
   useEffect(() => {
-    
+
     initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (login, password) => {
@@ -139,7 +142,7 @@ function AuthProvider({ children }) {
     const accessToken = response.data.token;
     const user = response.data.id;
 
-    if (response.data.length===1) {
+    if (response.data.length === 1) {
       setSession(null);
       throw new Error(response.data[0].error);
     } else {
@@ -160,7 +163,7 @@ function AuthProvider({ children }) {
     const accessToken = 'reFTGAW83EW2RDu2S0';
     const _xsrf = 'reFTGAW83EW2RDu2S0';
     const up = 1;
-    const t115=164;
+    const t115 = 164;
     const response = await axios.post('https://ideav.online/api/magnet/_m_new/18', {
       t33,
       t66078,
@@ -172,11 +175,11 @@ function AuthProvider({ children }) {
       t115,
       up,
       _xsrf
-    },{headers:{'X-Authorization':accessToken}});
+    }, { headers: { 'X-Authorization': accessToken } });
 
 
-    if(response.data.warning){
-      throw  new Error("Имя пользователя уже занято");
+    if (response.data.warning) {
+      throw new Error("Имя пользователя уже занято");
     }
     //    const { accessToken, user } = response.data;
     const user = t18;
