@@ -24,9 +24,12 @@ import {
     isPresent
 } from "../../sections/@dashboard/general/dopostavki/Util";
 import useLocalStorage from "../../hooks/useLocalStorage";
+																					 
 import Iconify from "../../components/Iconify";
 import { AppWidgetSummary } from "../../sections/@dashboard/general/app";
+										   
 import AppWelcomeVideo from "../../sections/@dashboard/general/app/AppWelcomeVideo";
+											
 
 
 
@@ -149,6 +152,8 @@ export default function GeneralApp() {
     const getToken = (() => {
         getWarehouse();
         getDataDashboard(chosedWarehouse);
+									  
+							 
     })
 
 
@@ -195,6 +200,9 @@ export default function GeneralApp() {
     };
 
    
+									 
+															   
+				  
     const [customOptionsState, setCustomOptionsState] = useState({
         uniqueBrands: null,
         uniqueCategories: null,
