@@ -4,9 +4,12 @@ import useAuth from 'src/hooks/useAuth';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // components
 import MenuPopover from '../../../components/MenuPopover';
 import { IconButtonAnimate } from '../../../components/animate';
+
+
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +56,10 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src="https://minimal-assets-api.vercel.app/assets/images/avatars/avatar_5.jpg" alt="Rayan Moran" />
+        <Avatar src={AccountCircleIcon}  />
+																														
+																																	
+			  
       </IconButtonAnimate>
 
       <MenuPopover

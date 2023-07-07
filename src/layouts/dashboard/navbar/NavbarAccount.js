@@ -41,7 +41,7 @@ export default function NavbarAccount({ isCollapse }) {
           }),
         }}
       >
-        <Avatar src="https://minimal-assets-api.vercel.app/assets/images/avatars/avatar_5.jpg" alt="Rayan Moran" />
+        {/* <Avatar src="https://minimal-assets-api.vercel.app/assets/images/avatars/avatar_5.jpg" alt="Rayan Moran" /> */}
 
         <Box
           sx={{
