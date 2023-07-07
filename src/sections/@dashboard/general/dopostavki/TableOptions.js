@@ -40,6 +40,48 @@ function numberComparator() {
 }
 
 export const columns = [
+    { // 13
+        name: "nmId",
+        label: " ",
+        options: {
+            filter: false,
+            searchable: false,
+            sort: false,
+            viewColumns: false,
+            customBodyRender: (value, tableMeta, updateValue) => (
+                <Link href={`https://www.wildberries.ru/catalog/${value}/detail.aspx`} target="_blank">
+                    {
+                        <Image
+                            src={`https://images.wbstatic.net/c246x328/new/${getSubstring(value, 0, 4)}0000/${value}-1.jpg`}
+                            sx={{
+                                width: 48
+                            }}
+
+                            onError={(e) => handleOnError(e, value)}
+                        />
+                    }
+                </Link>
+            ),
+            setCellProps: () => ({
+                style: {
+                    whiteSpace: "nowrap",
+                    position: "sticky",
+                    left: "0",
+                    background: "white",
+                    zIndex: 100
+                }
+            }),
+            setCellHeaderProps: () => ({
+                style: {
+                    whiteSpace: "nowrap",
+                    position: "sticky",
+                    left: 0,
+                    background: "white",
+                    zIndex: 101
+                }
+            })
+        }
+    },
     { // 0
         name: "supplierArticle",
         label: "Артикул",
@@ -144,48 +186,6 @@ export const columns = [
             sortCompare: numberComparator(),
         }
     },
-    { // 13
-        name: " ",
-        label: " ",
-        options: {
-            filter: false,
-            searchable: false,
-            sort: false,
-            viewColumns: false,
-            customBodyRender: (value, tableMeta, updateValue) => (
-                <Link href={`https://www.wildberries.ru/catalog/${value}/detail.aspx`} target="_blank">
-                    {
-                        <Image
-                            src={`https://images.wbstatic.net/c246x328/new/${getSubstring(value, 0, 4)}0000/${value}-1.jpg`}
-                            sx={{
-                                width: 48
-                            }}
-
-                            onError={(e) => handleOnError(e, value)}
-                        />
-                    }
-                </Link>
-            ),
-            setCellProps: () => ({
-                style: {
-                    whiteSpace: "nowrap",
-                    position: "sticky",
-                    left: "0",
-                    background: "white",
-                    zIndex: 100
-                }
-            }),
-            setCellHeaderProps: () => ({
-                style: {
-                    whiteSpace: "nowrap",
-                    position: "sticky",
-                    left: 0,
-                    background: "white",
-                    zIndex: 101
-                }
-            })
-        }
-    },
     { // 14
         name: "nmId",
         label: "Код WB",
@@ -276,7 +276,7 @@ export const columns = [
         }
     },
     { // 24
-        name: "Остаток на складе, шт",
+        name: "qtyFull",
         label: "Остаток на складе, шт",
         options: {
             filter: false,

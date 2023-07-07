@@ -9,7 +9,8 @@ function modifyData(buildHead, buildBody, columns, data) {
     data.forEach(s => {
         const tableData = s.data;
         for (let i = 4; i < tableData.length; i += 1) {
-            tableData[i] = tableData[i].replace('-', ' ').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, " ");
+            if(tableData[i])
+                tableData[i] = tableData[i].replace('-', ' ').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, " ");
         }
     })
     return `\uFEFF${buildHead(columns)}${buildBody(data)}`;
