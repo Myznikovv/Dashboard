@@ -12,6 +12,7 @@ import useIsMountedRef from '../../../hooks/useIsMountedRef';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
+import axios from '../../../utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +25,11 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const RegisterSchema = Yup.object().shape({
-    firstName: Yup.string().required('First name required'),
-    lastName: Yup.string().required('Last name required'),
-    apiKeyWB: Yup.string().required('WB token is required'),
-    login: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    firstName: Yup.string().required('Укажите имя'),
+    lastName: Yup.string().required('Укажите фамилию'),
+    apiKeyWB: Yup.string().required('Укажите API-ключ Wildberries'),
+    login: Yup.string().email('Введите валидный Email').required('Укажите Email'),
+    password: Yup.string().required('Придумайте Password'),
   });
 
   const defaultValues = {
@@ -52,9 +53,10 @@ export default function RegisterForm() {
 
   const onSubmit = async (data) => {
     try {
-      const tokens = Math.random().toString().replace('.','').substr(1,15);
+      const tokens = (Math.random().toString(36)+Math.random().toString(36)+Math.random().toString(36)).replace(/\./g,'').substring(1,32);
       await register(data.firstName, data.lastName, data.apiKeyWB, data.login, data.password, tokens, tokens);
       console.log(data.firstName, data.lastName, data.apiKeyWB, data.login, data.password, tokens, tokens)
+
     } catch (error) {
       setError(error.message);
       
@@ -67,15 +69,15 @@ export default function RegisterForm() {
         {!!error && <Alert severity="error">{error}</Alert>}
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <RHFTextField name="firstName" label="First name" />
-          <RHFTextField name="lastName" label="Last name" />
+          <RHFTextField name="firstName" label="Имя" />
+          <RHFTextField name="lastName" label="Фамилия" />
         </Stack>
-        <RHFTextField name="apiKeyWB" label="WB TOKEN" />
-        <RHFTextField name="login" label="Email address" />
+        <RHFTextField name="apiKeyWB" label="Ключ API WB" />
+        <RHFTextField name="login" label="Email" />
 
         <RHFTextField
           name="password"
-          label="Password"
+          label="Пароль"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -89,7 +91,7 @@ export default function RegisterForm() {
         />
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Register
+          Зарегистрироваться
         </LoadingButton>
       </Stack>
     </FormProvider>
