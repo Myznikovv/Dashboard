@@ -68,15 +68,15 @@ export default function Register() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <Page title="Register">
+    <Page title="Регистрация MagnetX">
       <RootStyle>
         <HeaderStyle>
           <Logo />
           {smUp && (
             <Typography variant="body2" sx={{ mt: { md: -2 } }}>
-              Already have an account?{' '}
+              Уже есть учетная запись?{' '}
               <Link variant="subtitle2" component={RouterLink} to={PATH_AUTH.login}>
-                Login
+                Войдите
               </Link>
             </Typography>
           )}
@@ -99,9 +99,9 @@ export default function Register() {
             <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h4" gutterBottom>
-                  Get started.
+                  Регистрация
                 </Typography>
-                <Typography sx={{ color: 'text.secondary' }}>Опиание которое нужно поменять!</Typography>
+                <Typography sx={{ color: 'text.secondary' }}>Введите ваши данные и ключ АПИ WB</Typography>
               </Box>
               {/* <Tooltip title={capitalCase(method)}>
                 <>
@@ -130,9 +130,9 @@ export default function Register() {
 
             {!smUp && (
               <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
-                Already have an account?{' '}
+                Уже есть учетная запись?{' '}
                 <Link variant="subtitle2" to={PATH_AUTH.login} component={RouterLink}>
-                  Login
+                  Войдите
                 </Link>
               </Typography>
             )}
